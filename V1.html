@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Metas Detalhado</title>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="shortcut icon" href="simple-line-icons_check.png" type="image/x-icon">
+    <style>
+        /* --- 1. Reset e Base --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc; /* Slate-50 */
+            color: #1e293b; /* Slate-800 */
+            line-height: 1.5;
+            padding-bottom: 4rem;
+        }
+
+        /* --- 2. Layout Principal --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        header p { color: #64748b; font-size: 1.1rem; }
+
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        @media (min-width: 1280px) {
+            .grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* --- 3. Cartões (Cards) --- */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            flex: 1;
+            position: relative;
+        }
+        
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-wrapper {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .meta-info h2 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+        }
+        .meta-info span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .btn-edit {
+            background: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-edit:hover { color: #4f46e5; }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+        }
+        .current-val { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+        .target-val { font-size: 0.875rem; font-weight: 600; color: #64748b; }
+
+        /* Barra de Progresso */
+        .progress-track {
+            height: 0.75rem;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 9999px;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+        }
+
+        /* Marcos */
+        .milestone {
+            position: absolute; top: 0; bottom: 0; width: 2px;
+            z-index: 2; cursor: help;
+        }
+        .milestone-line {
+            height: 100%; width: 100%;
+            background-color: rgba(255,255,255,0.5);
+        }
+        .milestone-dot {
+            position: absolute; top: -3px; left: -4px;
+            width: 10px; height: 10px; border-radius: 50%;
+            border: 2px solid white; background-color: #cbd5e1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .milestone.reached .milestone-dot { background-color: #fbbf24; }
+        
+        .tooltip {
+            visibility: hidden;
+            background-color: #1e293b; color: white;
+            padding: 4px 8px; border-radius: 4px;
+            position: absolute; bottom: 140%; left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap; font-size: 0.7rem;
+            opacity: 0; transition: opacity 0.2s;
+            z-index: 10; pointer-events: none;
+        }
+        .tooltip::after {
+            content: ""; position: absolute;
+            top: 100%; left: 50%; margin-left: -4px;
+            border-width: 4px; border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        .milestone:hover .tooltip { visibility: visible; opacity: 1; }
+
+        .pct-label {
+            display: flex; justify-content: space-between;
+            font-size: 0.7rem; font-weight: 700; color: #94a3b8;
+        }
+
+        /* Footer de Controles */
+        .card-footer {
+            padding: 1rem 1.5rem;
+            background-color: #fff;
+            border-top: 1px solid #f1f5f9;
+        }
+        .control-group { display: flex; gap: 0.5rem; }
+        
+        .btn-control {
+            width: 2.5rem; height: 2.5rem;
+            display: flex; align-items: center; justify-content: center;
+            background: #f1f5f9; border: 1px solid #e2e8f0;
+            border-radius: 0.5rem; cursor: pointer;
+            color: #475569; font-weight: bold; font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+        .btn-control:hover { background: #e2e8f0; }
+
+        .input-control {
+            flex: 1; text-align: center;
+            border: 1px solid #e2e8f0; border-radius: 0.5rem;
+            background: #f8fafc; font-weight: 600;
+            color: #334155; font-size: 0.9rem;
+        }
+        .input-control:focus { outline: 2px solid #6366f1; border-color: transparent; }
+
+        /* --- 4. Modal Edição --- */
+        .edit-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; backdrop-filter: blur(2px);
+        }
+        .edit-modal {
+            background: white; width: 90%; max-width: 400px;
+            border-radius: 1rem; padding: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .edit-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block; font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; color: #64748b; margin-bottom: 0.25rem;
+        }
+        .form-input {
+            width: 100%; padding: 0.5rem;
+            border: 1px solid #cbd5e1; border-radius: 0.375rem;
+            font-size: 0.9rem;
+        }
+        .row { display: flex; gap: 0.5rem; }
+        
+        .btn-primary {
+            width: 100%; padding: 0.75rem;
+            background: #4f46e5; color: white;
+            border: none; border-radius: 0.5rem;
+            font-weight: 600; cursor: pointer;
+            margin-top: 1rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-primary:hover { background: #4338ca; }
+
+        /* Lista de Marcos na Edição */
+        .milestone-list {
+            list-style: none; max-height: 100px; overflow-y: auto;
+            border: 1px solid #f1f5f9; border-radius: 0.375rem; margin-top: 0.5rem;
+        }
+        .milestone-item {
+            display: flex; justify-content: space-between;
+            padding: 0.5rem; border-bottom: 1px solid #f1f5f9;
+            font-size: 0.8rem; background: #f8fafc;
+        }
+
+        /* --- 5. Temas (Colors) --- */
+        .theme-emerald .card-header { background-color: #ecfdf5; }
+        .theme-emerald .icon-wrapper { color: #059669; }
+        .theme-emerald .progress-fill { background-color: #10b981; }
+        
+        .theme-blue .card-header { background-color: #eff6ff; }
+        .theme-blue .icon-wrapper { color: #2563eb; }
+        .theme-blue .progress-fill { background-color: #3b82f6; }
+        
+        .theme-cyan .card-header { background-color: #ecfeff; }
+        .theme-cyan .icon-wrapper { color: #0891b2; }
+        .theme-cyan .progress-fill { background-color: #06b6d4; }
+        
+        .theme-violet .card-header { background-color: #f5f3ff; }
+        .theme-violet .icon-wrapper { color: #7c3aed; }
+        .theme-violet .progress-fill { background-color: #8b5cf6; }
+        
+        .theme-rose .card-header { background-color: #fff1f2; }
+        .theme-rose .icon-wrapper { color: #e11d48; }
+        .theme-rose .progress-fill { background-color: #f43f5e; }
+        
+        .theme-red .card-header { background-color: #fef2f2; }
+        .theme-red .icon-wrapper { color: #dc2626; }
+        .theme-red .progress-fill { background-color: #ef4444; }
+        
+        .theme-slate .card-header { background-color: #f8fafc; }
+        .theme-slate .icon-wrapper { color: #475569; }
+        .theme-slate .progress-fill { background-color: #64748b; }
+
+        /* Confetti Overlay */
+        #confetti {
+            position: fixed; inset: 0; pointer-events: none; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        #confetti.active { opacity: 1; }
+        .confetti-msg {
+            background: #22c55e; color: white;
+            padding: 1rem 2rem; border-radius: 50px;
+            font-weight: bold; font-size: 1.2rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-25%); }
+            50% { transform: translateY(0); }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><i data-lucide="target"></i> Painel de Metas</h1>
+            <p>Acompanhamento detalhado das suas conquistas</p>
+        </header>
+
+        <div id="grid-container" class="grid">
+            <!-- Cards gerados via JS -->
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="edit-modal-overlay" class="edit-overlay hidden">
+        <div class="edit-modal">
+            <div class="edit-header">
+                <h3>Editar Meta</h3>
+                <button onclick="closeEdit()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <div id="edit-form-content">
+                <!-- Form gerado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti -->
+    <div id="confetti">
+        <div class="confetti-msg">🎉 Meta Atingida! Parabéns!</div>
+    </div>
+
+    <script>
+        // --- 1. Dados Iniciais (Estrutura Fragmentada) ---
+        const INITIAL_DATA = {
+            financial: {
+                id: 'financial', title: 'Meta Financeira', icon: 'trending-up',
+                color: 'emerald', current: 0, target: 10000, unit: 'R$', deadline: '2025-12-31',
+                milestones: [{ val: 5000, label: 'Reserva de Emergência' }]
+            },
+            books: {
+                id: 'books', title: 'Livros Lidos', icon: 'book-open',
+                color: 'blue', current: 1, target: 12, unit: 'Livros', deadline: '2025-12-31',
+                milestones: []
+            },
+            movies: {
+                id: 'movies', title: 'Filmes Culturais', icon: 'film',
+                color: 'cyan', current: 3, target: 24, unit: 'Filmes', deadline: '2025-12-31',
+                milestones: []
+            },
+            rosary: {
+                id: 'rosary', title: 'Terços Rezados', icon: 'circle-dot',
+                color: 'rose', current: 15, target: 365, unit: 'Terços', deadline: '2025-12-31',
+                milestones: [{ val: 100, label: 'Primeira Centena' }]
+            },
+            mass: {
+                id: 'mass', title: 'Missas Presentes', icon: 'church',
+                color: 'violet', current: 4, target: 52, unit: 'Missas', deadline: '2025-12-31',
+                milestones: []
+            },
+            charity: {
+                id: 'charity', title: 'Obras de Caridade', icon: 'heart',
+                color: 'red', current: 2, target: 12, unit: 'Ações', deadline: '2025-12-31',
+                milestones: []
+            },
+            mortification: {
+                id: 'mortification', title: 'Sextas Mortificadas', icon: 'shield',
+                color: 'slate', current: 1, target: 50, unit: 'Dias', deadline: '2025-12-31',
+                milestones: []
+            }
+        };
+
+        // --- 2. Estado ---
+        // Mantém a chave 'userGoals_v2' para persistir os dados
+        let goals = JSON.parse(localStorage.getItem('userGoals_v2')) || INITIAL_DATA;
+        let editingGoalId = null;
+
+        // --- 3. Renderização ---
+        function render() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+
+            Object.values(goals).forEach(goal => {
+                const themeClass = `theme-${goal.color}`;
+                const pct = Math.min(100, Math.max(0, (goal.current / goal.target) * 100));
+                
+                // Dias restantes
+                const today = new Date();
+                const due = new Date(goal.deadline);
+                const diff = due - today;
+                const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                const daysText = daysLeft > 0 ? `${daysLeft} dias restantes` : 'Prazo encerrado';
+
+                // Formatação
+                const currFmt = goal.unit === 'R$' ? `R$ ${goal.current.toLocaleString('pt-BR')}` : goal.current;
+                const targFmt = goal.unit === 'R$' ? `R$ ${goal.target.toLocaleString('pt-BR')}` : `${goal.target} ${goal.unit}`;
+
+                // Marcos
+                const milestonesHTML = goal.milestones.map(m => {
+                    const mPct = Math.min(100, Math.max(0, (m.val / goal.target) * 100));
+                    const reached = goal.current >= m.val ? 'reached' : '';
+                    return `
+                        <div class="milestone ${reached}" style="left: ${mPct}%">
+                            <div class="milestone-line"></div>
+                            <div class="milestone-dot"></div>
+                            <div class="tooltip">${m.label} (${m.val})</div>
+                        </div>
+                    `;
+                }).join('');
+
+                const cardHTML = `
+                    <div class="card ${themeClass}">
+                        <div class="card-header">
+                            <div class="header-row">
+                                <div style="display:flex; gap:1rem; align-items:center;">
+                                    <div class="icon-wrapper">
+                                        <i data-lucide="${goal.icon}"></i>
+                                    </div>
+                                    <div class="meta-info">
+                                        <h2>${goal.title}</h2>
+                                        <span><i data-lucide="calendar" style="width:12px"></i> ${daysText}</span>
+                                    </div>
+                                </div>
+                                <button class="btn-edit" onclick="openEdit('${goal.id}')">
+                                    <i data-lucide="edit-2" style="width:18px"></i>
+                                </button>
+                            </div>
+
+                            <div class="stats-row">
+                                <span class="current-val">${currFmt}</span>
+                                <span class="target-val">/ ${targFmt}</span>
+                            </div>
+
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: ${pct}%"></div>
+                                ${milestonesHTML}
+                            </div>
+
+                            <div class="pct-label">
+                                <span>0%</span>
+                                <span style="color: ${pct >= 100 ? '#10b981' : 'inherit'}">${pct.toFixed(0)}%</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="control-group">
+                                <button class="btn-control" onclick="update('${goal.id}', -1)">-</button>
+                                <input class="input-control" type="number" value="${goal.current}" 
+                                       onchange="updateInput('${goal.id}', this.value)">
+                                <button class="btn-control" onclick="update('${goal.id}', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+            
+            // Inicializa ícones
+            lucide.createIcons();
+        }
+
+        // --- 4. Lógica de Atualização ---
+        function update(id, delta) {
+            const val = parseFloat(goals[id].current) + delta;
+            updateInput(id, val);
+        }
+
+        function updateInput(id, value) {
+            let val = parseFloat(value);
+            if (isNaN(val) || val < 0) val = 0;
+            
+            // Verifica conclusão para Confetti
+            const goal = goals[id];
+            if (val >= goal.target && goal.current < goal.target) {
+                showConfetti();
+            }
+
+            goals[id].current = val;
+            save();
+        }
+
+        function save() {
+            localStorage.setItem('userGoals_v2', JSON.stringify(goals));
+            render();
+        }
+
+        function showConfetti() {
+            const el = document.getElementById('confetti');
+            el.classList.add('active');
+            setTimeout(() => el.classList.remove('active'), 3000);
+        }
+
+        // --- 5. Lógica de Edição ---
+        function openEdit(id) {
+            editingGoalId = id;
+            const goal = goals[id];
+            const modal = document.getElementById('edit-modal-overlay');
+            const content = document.getElementById('edit-form-content');
+            
+            const msList = goal.milestones.map((m, idx) => `
+                <li class="milestone-item">
+                    <span>${m.val}: ${m.label}</span>
+                    <button onclick="removeMS(${idx})" style="color:#ef4444; border:none; background:none; cursor:pointer;">&times;</button>
+                </li>
+            `).join('');
+
+            content.innerHTML = `
+                <div class="form-group">
+                    <label>Título</label>
+                    <input id="ed-title" class="form-input" type="text" value="${goal.title}">
+                </div>
+                <div class="row">
+                    <div class="form-group" style="flex:1">
+                        <label>Meta</label>
+                        <input id="ed-target" class="form-input" type="number" value="${goal.target}">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>Unidade</label>
+                        <input id="ed-unit" class="form-input" type="text" value="${goal.unit}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Prazo</label>
+                    <input id="ed-date" class="form-input" type="date" value="${goal.deadline}">
+                </div>
+                
+                <div class="form-group" style="border-top:1px solid #eee; padding-top:0.5rem">
+                    <label>Adicionar Marco</label>
+                    <div class="row">
+                        <input id="new-ms-val" class="form-input" type="number" placeholder="Valor" style="width:30%">
+                        <input id="new-ms-lbl" class="form-input" type="text" placeholder="Texto">
+                        <button onclick="addMS()" class="btn-control" style="background:#0f172a; color:white;">+</button>
+                    </div>
+                    <ul class="milestone-list">${msList}</ul>
+                </div>
+
+                <button onclick="saveEdit()" class="btn-primary">Salvar Alterações</button>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeEdit() {
+            document.getElementById('edit-modal-overlay').classList.add('hidden');
+            editingGoalId = null;
+        }
+
+        function saveEdit() {
+            if (!editingGoalId) return;
+            const id = editingGoalId;
+            
+            goals[id].title = document.getElementById('ed-title').value;
+            goals[id].target = parseFloat(document.getElementById('ed-target').value);
+            goals[id].unit = document.getElementById('ed-unit').value;
+            goals[id].deadline = document.getElementById('ed-date').value;
+
+            closeEdit();
+            save();
+        }
+
+        function addMS() {
+            const val = document.getElementById('new-ms-val').value;
+            const lbl = document.getElementById('new-ms-lbl').value;
+            if (val && lbl) {
+                goals[editingGoalId].milestones.push({ val: parseFloat(val), label: lbl });
+                goals[editingGoalId].milestones.sort((a,b) => a.val - b.val);
+                openEdit(editingGoalId); // Re-renderiza form
+            }
+        }
+
+        function removeMS(idx) {
+            goals[editingGoalId].milestones.splice(idx, 1);
+            openEdit(editingGoalId);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', render);
+
+    </script>
+</body>
+</html>

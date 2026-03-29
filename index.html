@@ -5,73 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Metas Detalhado</title>
     
-    <!-- Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="shortcut icon" href="simple-line-icons_check.png" type="image/x-icon">
+    
     <style>
         /* --- 1. Reset e Base --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #f8fafc; /* Slate-50 */
-            color: #1e293b; /* Slate-800 */
-            line-height: 1.5;
-            padding-bottom: 4rem;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            color: #1e293b;
+            line-height: 1.4;
+            padding-bottom: 2rem;
+            min-height: 100vh;
         }
 
         /* --- 2. Layout Principal --- */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 1rem 1.5rem; /* Reduzido para ganhar espaço no topo */
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
+            margin-bottom: 1.5rem; /* Margem reduzida */
+            padding: 1rem 0; /* Padding reduzido */
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
         }
         header h1 {
-            font-size: 2.25rem;
+            font-size: 1.75rem; /* Título bem menor */
             font-weight: 800;
             color: #0f172a;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
         }
-        header p { color: #64748b; font-size: 1.1rem; }
+        header p { color: #64748b; font-size: 0.9rem; font-weight: 500; } /* Subtítulo menor */
 
-        /* Grid Responsivo */
+        /* Grid Responsivo e Mais Denso */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            /* Força os cartões a serem um pouco mais estreitos para caber 4 por linha mais facilmente */
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem; /* Espaço entre cartões reduzido */
         }
-        @media (min-width: 1280px) {
-            .grid { grid-template-columns: repeat(4, 1fr); }
+        @media (min-width: 1200px) {
+            .grid { grid-template-columns: repeat(4, 1fr); } /* Garante 4 colunas em telas grandes */
         }
 
         /* --- 3. Cartões (Cards) --- */
         .card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            border-radius: 1rem; /* Borda levemente menor */
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             height: 100%;
+            position: relative;
         }
         .card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-color: #cbd5e1;
         }
 
         .card-header {
-            padding: 1.5rem;
+            padding: 1rem; /* Padding interno reduzido drasticamente */
             flex: 1;
             position: relative;
         }
@@ -80,59 +93,67 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem; /* Margem reduzida */
         }
 
         .icon-wrapper {
-            padding: 0.75rem;
+            padding: 0.6rem; /* Ícone menor */
             border-radius: 0.75rem;
             background: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             display: flex; align-items: center; justify-content: center;
         }
 
         .meta-info h2 {
-            font-size: 1.125rem;
+            font-size: 1rem; /* Fonte do título da meta menor */
             font-weight: 700;
-            line-height: 1.2;
+            line-height: 1.1;
             margin-bottom: 0.25rem;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
         }
         .meta-info span {
-            font-size: 0.75rem;
+            font-size: 0.7rem; /* Texto de dias restantes menor */
             font-weight: 600;
             color: #64748b;
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center; gap: 3px;
+            background: rgba(255,255,255,0.6);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.5rem;
+            width: fit-content;
         }
 
         .btn-edit {
             background: white;
-            border: none;
-            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.4rem;
             border-radius: 50%;
             cursor: pointer;
             color: #94a3b8;
-            transition: color 0.2s;
+            transition: all 0.2s;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .btn-edit:hover { color: #4f46e5; }
+        .btn-edit:hover { color: #4f46e5; border-color: #4f46e5; transform: rotate(15deg); }
 
         .stats-row {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem; /* Margem reduzida */
         }
-        .current-val { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
-        .target-val { font-size: 0.875rem; font-weight: 600; color: #64748b; }
+        .current-val { font-size: 1.4rem; font-weight: 800; color: #0f172a; letter-spacing: -0.025em; }
+        .target-val { font-size: 0.8rem; font-weight: 600; color: #64748b; }
 
         /* Barra de Progresso */
         .progress-track {
-            height: 0.75rem;
-            background-color: rgba(0,0,0,0.05);
+            height: 0.6rem; /* Barra mais fina */
+            background-color: rgba(0,0,0,0.06);
             border-radius: 9999px;
             position: relative;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
         .progress-fill {
             height: 100%;
@@ -148,35 +169,23 @@
             position: absolute; top: 0; bottom: 0; width: 2px;
             z-index: 2; cursor: help;
         }
-        .milestone-line {
-            height: 100%; width: 100%;
-            background-color: rgba(255,255,255,0.5);
-        }
+        .milestone-line { height: 100%; width: 100%; background-color: rgba(255,255,255,0.6); }
         .milestone-dot {
             position: absolute; top: -3px; left: -4px;
             width: 10px; height: 10px; border-radius: 50%;
             border: 2px solid white; background-color: #cbd5e1;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .milestone.reached .milestone-dot { background-color: #fbbf24; }
+        .milestone.reached .milestone-dot { background-color: #fbbf24; border-color: #fffbeb; }
         
         .tooltip {
-            visibility: hidden;
-            background-color: #1e293b; color: white;
+            visibility: hidden; background-color: #0f172a; color: white;
             padding: 4px 8px; border-radius: 4px;
-            position: absolute; bottom: 140%; left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap; font-size: 0.7rem;
-            opacity: 0; transition: opacity 0.2s;
-            z-index: 10; pointer-events: none;
+            position: absolute; bottom: 150%; left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            white-space: nowrap; font-size: 0.7rem; font-weight: 600;
+            opacity: 0; transition: all 0.2s; z-index: 10; pointer-events: none;
         }
-        .tooltip::after {
-            content: ""; position: absolute;
-            top: 100%; left: 50%; margin-left: -4px;
-            border-width: 4px; border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-        }
-        .milestone:hover .tooltip { visibility: visible; opacity: 1; }
+        .milestone:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
 
         .pct-label {
             display: flex; justify-content: space-between;
@@ -185,127 +194,78 @@
 
         /* Footer de Controles */
         .card-footer {
-            padding: 1rem 1.5rem;
-            background-color: #fff;
+            padding: 0.75rem 1rem; /* Reduzido */
+            background-color: #f8fafc;
             border-top: 1px solid #f1f5f9;
         }
-        .control-group { display: flex; gap: 0.5rem; }
+        .control-group { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
         
         .btn-control {
-            width: 2.5rem; height: 2.5rem;
+            width: 2.25rem; height: 2.25rem; /* Botões menores */
             display: flex; align-items: center; justify-content: center;
-            background: #f1f5f9; border: 1px solid #e2e8f0;
+            background: white; border: 1px solid #cbd5e1;
             border-radius: 0.5rem; cursor: pointer;
-            color: #475569; font-weight: bold; font-size: 1.2rem;
-            transition: background 0.2s;
+            color: #475569; font-weight: bold; font-size: 1rem;
+            transition: all 0.2s;
         }
-        .btn-control:hover { background: #e2e8f0; }
+        .btn-control:hover { background: #f1f5f9; border-color: #94a3b8; color: #0f172a; }
 
         .input-control {
             flex: 1; text-align: center;
-            border: 1px solid #e2e8f0; border-radius: 0.5rem;
-            background: #f8fafc; font-weight: 600;
-            color: #334155; font-size: 0.9rem;
+            border: 1px solid #cbd5e1; border-radius: 0.5rem;
+            background: white; font-weight: 700;
+            color: #1e293b; font-size: 0.9rem;
+            min-width: 0; /* Evita que o input estoure o layout */
         }
-        .input-control:focus { outline: 2px solid #6366f1; border-color: transparent; }
+        .input-control:focus { outline: none; border-color: #4f46e5; }
 
-        /* --- 4. Modal Edição --- */
-        .edit-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 50; backdrop-filter: blur(2px);
+        /* Marcador de Data */
+        .update-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 8px; background-color: #e2e8f0; color: #475569;
+            border-radius: 12px; font-size: 0.65rem; font-weight: 600;
+            width: 100%; justify-content: center;
         }
-        .edit-modal {
-            background: white; width: 90%; max-width: 400px;
-            border-radius: 1rem; padding: 1.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-        }
-        .edit-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;
-        }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label {
-            display: block; font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase; color: #64748b; margin-bottom: 0.25rem;
-        }
-        .form-input {
-            width: 100%; padding: 0.5rem;
-            border: 1px solid #cbd5e1; border-radius: 0.375rem;
-            font-size: 0.9rem;
-        }
-        .row { display: flex; gap: 0.5rem; }
-        
-        .btn-primary {
-            width: 100%; padding: 0.75rem;
-            background: #4f46e5; color: white;
-            border: none; border-radius: 0.5rem;
-            font-weight: 600; cursor: pointer;
-            margin-top: 1rem;
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-        }
-        .btn-primary:hover { background: #4338ca; }
+        .update-badge i { width: 12px; height: 12px; }
+        .update-badge.recent { background-color: #dcfce7; color: #166534; }
 
-        /* Lista de Marcos na Edição */
-        .milestone-list {
-            list-style: none; max-height: 100px; overflow-y: auto;
-            border: 1px solid #f1f5f9; border-radius: 0.375rem; margin-top: 0.5rem;
+        /* Cartão "Adicionar Nova Meta" */
+        .card-add {
+            border: 2px dashed #cbd5e1; background: transparent; box-shadow: none;
+            justify-content: center; align-items: center; cursor: pointer;
+            min-height: 180px; color: #64748b;
         }
-        .milestone-item {
-            display: flex; justify-content: space-between;
-            padding: 0.5rem; border-bottom: 1px solid #f1f5f9;
-            font-size: 0.8rem; background: #f8fafc;
-        }
+        .card-add:hover { border-color: #4f46e5; color: #4f46e5; background: rgba(79, 70, 229, 0.02); }
+        .card-add i { width: 36px; height: 36px; margin-bottom: 0.5rem; }
+        .card-add span { font-size: 1rem; font-weight: 700; }
 
-        /* --- 5. Temas (Colors) --- */
-        .theme-emerald .card-header { background-color: #ecfdf5; }
-        .theme-emerald .icon-wrapper { color: #059669; }
-        .theme-emerald .progress-fill { background-color: #10b981; }
+        /* Modal e Cores (Mantidos idênticos, apenas listados para funcionar) */
+        .edit-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; backdrop-filter: blur(4px); padding: 1rem; }
+        .edit-modal { background: white; width: 100%; max-width: 450px; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
+        .edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; }
+        .edit-header h3 { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.75rem; font-size: 0.95rem; font-family: inherit; font-weight: 500; background: #f8fafc; transition: all 0.2s; }
+        .row { display: flex; gap: 1rem; }
+        .btn-primary { width: 100%; padding: 1rem; background: #4f46e5; color: white; border: none; border-radius: 0.75rem; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
+        .btn-danger { width: 100%; padding: 1rem; background: transparent; color: #ef4444; border: 1px solid #f87171; border-radius: 0.75rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; transition: all 0.2s; }
+        .milestone-list { list-style: none; max-height: 120px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-top: 0.75rem; }
+        .milestone-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; background: white; font-weight: 500; }
         
-        .theme-blue .card-header { background-color: #eff6ff; }
-        .theme-blue .icon-wrapper { color: #2563eb; }
-        .theme-blue .progress-fill { background-color: #3b82f6; }
-        
-        .theme-cyan .card-header { background-color: #ecfeff; }
-        .theme-cyan .icon-wrapper { color: #0891b2; }
-        .theme-cyan .progress-fill { background-color: #06b6d4; }
-        
-        .theme-violet .card-header { background-color: #f5f3ff; }
-        .theme-violet .icon-wrapper { color: #7c3aed; }
-        .theme-violet .progress-fill { background-color: #8b5cf6; }
-        
-        .theme-rose .card-header { background-color: #fff1f2; }
-        .theme-rose .icon-wrapper { color: #e11d48; }
-        .theme-rose .progress-fill { background-color: #f43f5e; }
-        
-        .theme-red .card-header { background-color: #fef2f2; }
-        .theme-red .icon-wrapper { color: #dc2626; }
-        .theme-red .progress-fill { background-color: #ef4444; }
-        
-        .theme-slate .card-header { background-color: #f8fafc; }
-        .theme-slate .icon-wrapper { color: #475569; }
-        .theme-slate .progress-fill { background-color: #64748b; }
+        .theme-emerald .card-header { background: linear-gradient(145deg, #ecfdf5, #d1fae5); } .theme-emerald .icon-wrapper { color: #059669; } .theme-emerald .progress-fill { background: linear-gradient(90deg, #34d399, #059669); }
+        .theme-blue .card-header { background: linear-gradient(145deg, #eff6ff, #dbeafe); } .theme-blue .icon-wrapper { color: #2563eb; } .theme-blue .progress-fill { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+        .theme-cyan .card-header { background: linear-gradient(145deg, #ecfeff, #cffafe); } .theme-cyan .icon-wrapper { color: #0891b2; } .theme-cyan .progress-fill { background: linear-gradient(90deg, #22d3ee, #0891b2); }
+        .theme-violet .card-header { background: linear-gradient(145deg, #f5f3ff, #ede9fe); } .theme-violet .icon-wrapper { color: #7c3aed; } .theme-violet .progress-fill { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+        .theme-rose .card-header { background: linear-gradient(145deg, #fff1f2, #ffe4e6); } .theme-rose .icon-wrapper { color: #e11d48; } .theme-rose .progress-fill { background: linear-gradient(90deg, #fb7185, #e11d48); }
+        .theme-red .card-header { background: linear-gradient(145deg, #fef2f2, #fee2e2); } .theme-red .icon-wrapper { color: #dc2626; } .theme-red .progress-fill { background: linear-gradient(90deg, #f87171, #dc2626); }
+        .theme-slate .card-header { background: linear-gradient(145deg, #f8fafc, #f1f5f9); } .theme-slate .icon-wrapper { color: #475569; } .theme-slate .progress-fill { background: linear-gradient(90deg, #94a3b8, #475569); }
+        .theme-amber .card-header { background: linear-gradient(145deg, #fffbeb, #fef3c7); } .theme-amber .icon-wrapper { color: #d97706; } .theme-amber .progress-fill { background: linear-gradient(90deg, #fbbf24, #d97706); }
 
-        /* Confetti Overlay */
-        #confetti {
-            position: fixed; inset: 0; pointer-events: none; z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.5s;
-        }
+        #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s; }
         #confetti.active { opacity: 1; }
-        .confetti-msg {
-            background: #22c55e; color: white;
-            padding: 1rem 2rem; border-radius: 50px;
-            font-weight: bold; font-size: 1.2rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
-            animation: bounce 1s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(-25%); }
-            50% { transform: translateY(0); }
-        }
-
+        .confetti-msg { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 1.5rem 3rem; border-radius: 50px; font-weight: 800; font-size: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(-25%); } 50% { transform: translateY(0); } }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -313,76 +273,43 @@
 
     <div class="container">
         <header>
-            <h1><i data-lucide="target"></i> Painel de Metas</h1>
+            <h1><i data-lucide="target" style="width: 28px; height: 28px; color: #4f46e5;"></i> Painel de Metas</h1>
             <p>Acompanhamento detalhado das suas conquistas</p>
         </header>
 
         <div id="grid-container" class="grid">
-            <!-- Cards gerados via JS -->
-        </div>
+            </div>
     </div>
 
-    <!-- Modal de Edição -->
     <div id="edit-modal-overlay" class="edit-overlay hidden">
         <div class="edit-modal">
             <div class="edit-header">
-                <h3>Editar Meta</h3>
-                <button onclick="closeEdit()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+                <h3 id="modal-title">Editar Meta</h3>
+                <button onclick="closeModal()" style="background:none; border:none; font-size:2rem; line-height:1; color:#94a3b8; cursor:pointer;">&times;</button>
             </div>
-            <div id="edit-form-content">
-                <!-- Form gerado via JS -->
-            </div>
+            <div id="edit-form-content"></div>
         </div>
     </div>
 
-    <!-- Confetti -->
     <div id="confetti">
         <div class="confetti-msg">🎉 Meta Atingida! Parabéns!</div>
     </div>
 
     <script>
-        // --- 1. Dados Iniciais (Estrutura Fragmentada) ---
+        // --- 1. Dados Iniciais (Agora com 8 metas de exemplo preenchidas) ---
         const INITIAL_DATA = {
-            financial: {
-                id: 'financial', title: 'Meta Financeira', icon: 'trending-up',
-                color: 'emerald', current: 0, target: 10000, unit: 'R$', deadline: '2025-12-31',
-                milestones: [{ val: 5000, label: 'Reserva de Emergência' }]
-            },
-            books: {
-                id: 'books', title: 'Livros Lidos', icon: 'book-open',
-                color: 'blue', current: 1, target: 12, unit: 'Livros', deadline: '2025-12-31',
-                milestones: []
-            },
-            movies: {
-                id: 'movies', title: 'Filmes Culturais', icon: 'film',
-                color: 'cyan', current: 3, target: 24, unit: 'Filmes', deadline: '2025-12-31',
-                milestones: []
-            },
-            rosary: {
-                id: 'rosary', title: 'Terços Rezados', icon: 'circle-dot',
-                color: 'rose', current: 15, target: 365, unit: 'Terços', deadline: '2025-12-31',
-                milestones: [{ val: 100, label: 'Primeira Centena' }]
-            },
-            mass: {
-                id: 'mass', title: 'Missas Presentes', icon: 'church',
-                color: 'violet', current: 4, target: 52, unit: 'Missas', deadline: '2025-12-31',
-                milestones: []
-            },
-            charity: {
-                id: 'charity', title: 'Obras de Caridade', icon: 'heart',
-                color: 'red', current: 2, target: 12, unit: 'Ações', deadline: '2025-12-31',
-                milestones: []
-            },
-            mortification: {
-                id: 'mortification', title: 'Sextas Mortificadas', icon: 'shield',
-                color: 'slate', current: 1, target: 50, unit: 'Dias', deadline: '2025-12-31',
-                milestones: []
-            }
+            financial: { id: 'financial', title: 'Meta Financeira', icon: 'trending-up', color: 'emerald', current: 0, target: 10000, unit: 'R$', deadline: '2025-12-31', milestones: [{ val: 5000, label: 'Emergência' }], lastUpdated: null },
+            books: { id: 'books', title: 'Livros Lidos', icon: 'book-open', color: 'blue', current: 1, target: 12, unit: 'Livros', deadline: '2025-12-31', milestones: [], lastUpdated: null },
+            movies: { id: 'movies', title: 'Filmes Culturais', icon: 'film', color: 'cyan', current: 3, target: 24, unit: 'Filmes', deadline: '2025-12-31', milestones: [], lastUpdated: null },
+            rosary: { id: 'rosary', title: 'Terços Rezados', icon: 'circle-dot', color: 'rose', current: 15, target: 365, unit: 'Terços', deadline: '2025-12-31', milestones: [{ val: 100, label: '100 Terços' }], lastUpdated: null },
+            water: { id: 'water', title: 'Beber Água', icon: 'droplet', color: 'cyan', current: 1, target: 3, unit: 'Litros', deadline: '2025-12-31', milestones: [], lastUpdated: null },
+            workout: { id: 'workout', title: 'Dias de Treino', icon: 'dumbbell', color: 'amber', current: 12, target: 200, unit: 'Dias', deadline: '2025-12-31', milestones: [{ val: 100, label: 'Metade' }], lastUpdated: null },
+            study: { id: 'study', title: 'Horas de Estudo', icon: 'brain', color: 'violet', current: 20, target: 100, unit: 'Horas', deadline: '2025-12-31', milestones: [], lastUpdated: null },
+            meditation: { id: 'meditation', title: 'Meditação', icon: 'flower', color: 'emerald', current: 5, target: 30, unit: 'Dias', deadline: '2025-12-31', milestones: [], lastUpdated: null }
         };
 
         // --- 2. Estado ---
-        // Mantém a chave 'userGoals_v2' para persistir os dados
-        let goals = JSON.parse(localStorage.getItem('userGoals_v2')) || INITIAL_DATA;
+        let goals = JSON.parse(localStorage.getItem('userGoals_v4')) || INITIAL_DATA;
         let editingGoalId = null;
 
         // --- 3. Renderização ---
@@ -394,18 +321,31 @@
                 const themeClass = `theme-${goal.color}`;
                 const pct = Math.min(100, Math.max(0, (goal.current / goal.target) * 100));
                 
-                // Dias restantes
                 const today = new Date();
                 const due = new Date(goal.deadline);
                 const diff = due - today;
                 const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
                 const daysText = daysLeft > 0 ? `${daysLeft} dias restantes` : 'Prazo encerrado';
 
-                // Formatação
+                let lastUpdatedText = "Sem alteração recente";
+                let isRecent = false;
+
+                if (goal.lastUpdated) {
+                    const dateObj = new Date(goal.lastUpdated);
+                    const now = new Date();
+                    const diffHours = Math.abs(now - dateObj) / 36e5;
+                    
+                    if (diffHours < 24) {
+                        lastUpdatedText = `Hoje, às ${dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                        isRecent = true;
+                    } else {
+                        lastUpdatedText = `Última: ${dateObj.toLocaleDateString('pt-BR')}`;
+                    }
+                }
+
                 const currFmt = goal.unit === 'R$' ? `R$ ${goal.current.toLocaleString('pt-BR')}` : goal.current;
                 const targFmt = goal.unit === 'R$' ? `R$ ${goal.target.toLocaleString('pt-BR')}` : `${goal.target} ${goal.unit}`;
 
-                // Marcos
                 const milestonesHTML = goal.milestones.map(m => {
                     const mPct = Math.min(100, Math.max(0, (m.val / goal.target) * 100));
                     const reached = goal.current >= m.val ? 'reached' : '';
@@ -422,17 +362,17 @@
                     <div class="card ${themeClass}">
                         <div class="card-header">
                             <div class="header-row">
-                                <div style="display:flex; gap:1rem; align-items:center;">
+                                <div style="display:flex; gap:0.75rem; align-items:center;">
                                     <div class="icon-wrapper">
-                                        <i data-lucide="${goal.icon}"></i>
+                                        <i data-lucide="${goal.icon}" style="width: 20px; height: 20px;"></i>
                                     </div>
                                     <div class="meta-info">
-                                        <h2>${goal.title}</h2>
-                                        <span><i data-lucide="calendar" style="width:12px"></i> ${daysText}</span>
+                                        <h2 title="${goal.title}">${goal.title}</h2>
+                                        <span><i data-lucide="calendar" style="width:10px; height:10px;"></i> ${daysText}</span>
                                     </div>
                                 </div>
-                                <button class="btn-edit" onclick="openEdit('${goal.id}')">
-                                    <i data-lucide="edit-2" style="width:18px"></i>
+                                <button class="btn-edit" onclick="openModal('${goal.id}')" title="Editar Meta">
+                                    <i data-lucide="edit-2" style="width:14px; height:14px;"></i>
                                 </button>
                             </div>
 
@@ -448,7 +388,7 @@
 
                             <div class="pct-label">
                                 <span>0%</span>
-                                <span style="color: ${pct >= 100 ? '#10b981' : 'inherit'}">${pct.toFixed(0)}%</span>
+                                <span style="color: ${pct >= 100 ? '#059669' : 'inherit'}">${pct.toFixed(0)}%</span>
                             </div>
                         </div>
 
@@ -459,17 +399,28 @@
                                        onchange="updateInput('${goal.id}', this.value)">
                                 <button class="btn-control" onclick="update('${goal.id}', 1)">+</button>
                             </div>
+                            
+                            <div class="update-badge ${isRecent ? 'recent' : ''}">
+                                <i data-lucide="clock"></i>
+                                ${lastUpdatedText}
+                            </div>
                         </div>
                     </div>
                 `;
                 container.innerHTML += cardHTML;
             });
+
+            container.innerHTML += `
+                <div class="card card-add" onclick="openModal()">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Adicionar Meta</span>
+                </div>
+            `;
             
-            // Inicializa ícones
             lucide.createIcons();
         }
 
-        // --- 4. Lógica de Atualização ---
+        // --- 4. Lógica de Atualização Rápida ---
         function update(id, delta) {
             const val = parseFloat(goals[id].current) + delta;
             updateInput(id, val);
@@ -479,113 +430,183 @@
             let val = parseFloat(value);
             if (isNaN(val) || val < 0) val = 0;
             
-            // Verifica conclusão para Confetti
             const goal = goals[id];
+            
             if (val >= goal.target && goal.current < goal.target) {
                 showConfetti();
             }
 
             goals[id].current = val;
+            goals[id].lastUpdated = new Date().toISOString();
             save();
         }
 
         function save() {
-            localStorage.setItem('userGoals_v2', JSON.stringify(goals));
+            localStorage.setItem('userGoals_v4', JSON.stringify(goals));
             render();
         }
 
         function showConfetti() {
             const el = document.getElementById('confetti');
             el.classList.add('active');
-            setTimeout(() => el.classList.remove('active'), 3000);
+            setTimeout(() => el.classList.remove('active'), 3500);
         }
 
-        // --- 5. Lógica de Edição ---
-        function openEdit(id) {
+        // --- 5. Lógica de Modal ---
+        function openModal(id = null) {
             editingGoalId = id;
-            const goal = goals[id];
+            const isEdit = id !== null;
             const modal = document.getElementById('edit-modal-overlay');
+            
+            document.getElementById('modal-title').innerText = isEdit ? 'Editar Meta' : 'Criar Nova Meta';
+
+            const goal = isEdit ? goals[id] : {
+                title: '', target: 10, unit: '', deadline: '2025-12-31', 
+                color: 'blue', icon: 'target', milestones: []
+            };
+            
+            window.tempMilestones = [...goal.milestones]; 
+
+            renderModalForm(goal, isEdit);
+            modal.classList.remove('hidden');
+        }
+
+        function renderModalForm(goal, isEdit) {
             const content = document.getElementById('edit-form-content');
             
-            const msList = goal.milestones.map((m, idx) => `
+            const msList = window.tempMilestones.map((m, idx) => `
                 <li class="milestone-item">
-                    <span>${m.val}: ${m.label}</span>
-                    <button onclick="removeMS(${idx})" style="color:#ef4444; border:none; background:none; cursor:pointer;">&times;</button>
+                    <span><strong>${m.val}</strong>: ${m.label}</span>
+                    <button type="button" onclick="removeTempMS(${idx})" style="color:#ef4444; border:none; background:none; cursor:pointer; font-size:1.2rem;">&times;</button>
                 </li>
             `).join('');
 
             content.innerHTML = `
                 <div class="form-group">
-                    <label>Título</label>
-                    <input id="ed-title" class="form-input" type="text" value="${goal.title}">
+                    <label>Título da Meta</label>
+                    <input id="ed-title" class="form-input" type="text" value="${goal.title}" placeholder="Ex: Ler mais livros">
                 </div>
+                
                 <div class="row">
                     <div class="form-group" style="flex:1">
-                        <label>Meta</label>
+                        <label>Alvo / Objetivo</label>
                         <input id="ed-target" class="form-input" type="number" value="${goal.target}">
                     </div>
                     <div class="form-group" style="flex:1">
                         <label>Unidade</label>
-                        <input id="ed-unit" class="form-input" type="text" value="${goal.unit}">
+                        <input id="ed-unit" class="form-input" type="text" value="${goal.unit}" placeholder="Ex: Pag, R$, Km">
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="form-group" style="flex:1">
+                        <label>Cor do Tema</label>
+                        <select id="ed-color" class="form-input">
+                            <option value="emerald" ${goal.color === 'emerald' ? 'selected' : ''}>Esmeralda</option>
+                            <option value="blue" ${goal.color === 'blue' ? 'selected' : ''}>Azul</option>
+                            <option value="cyan" ${goal.color === 'cyan' ? 'selected' : ''}>Ciano</option>
+                            <option value="violet" ${goal.color === 'violet' ? 'selected' : ''}>Violeta</option>
+                            <option value="rose" ${goal.color === 'rose' ? 'selected' : ''}>Rosa</option>
+                            <option value="red" ${goal.color === 'red' ? 'selected' : ''}>Vermelho</option>
+                            <option value="amber" ${goal.color === 'amber' ? 'selected' : ''}>Amarelo</option>
+                            <option value="slate" ${goal.color === 'slate' ? 'selected' : ''}>Cinza</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>Ícone (Lucide)</label>
+                        <input id="ed-icon" class="form-input" type="text" value="${goal.icon}" placeholder="Ex: star, heart, book">
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label>Prazo</label>
+                    <label>Prazo Final</label>
                     <input id="ed-date" class="form-input" type="date" value="${goal.deadline}">
                 </div>
                 
-                <div class="form-group" style="border-top:1px solid #eee; padding-top:0.5rem">
-                    <label>Adicionar Marco</label>
-                    <div class="row">
-                        <input id="new-ms-val" class="form-input" type="number" placeholder="Valor" style="width:30%">
-                        <input id="new-ms-lbl" class="form-input" type="text" placeholder="Texto">
-                        <button onclick="addMS()" class="btn-control" style="background:#0f172a; color:white;">+</button>
+                <div class="form-group" style="border-top:2px solid #f1f5f9; padding-top:1.25rem; margin-top:1.25rem;">
+                    <label>Marcos / Milestones</label>
+                    <div class="row" style="margin-bottom: 0.5rem">
+                        <input id="new-ms-val" class="form-input" type="number" placeholder="Valor" style="flex: 1">
+                        <input id="new-ms-lbl" class="form-input" type="text" placeholder="Nome" style="flex: 2">
+                        <button type="button" onclick="addTempMS()" class="btn-control" style="background:#0f172a; color:white; flex: 0 0 2.5rem;">+</button>
                     </div>
                     <ul class="milestone-list">${msList}</ul>
                 </div>
 
-                <button onclick="saveEdit()" class="btn-primary">Salvar Alterações</button>
+                <button onclick="saveModalForm()" class="btn-primary">
+                    ${isEdit ? 'Salvar Alterações' : 'Criar Nova Meta'}
+                </button>
+
+                ${isEdit ? `<button onclick="deleteGoal()" class="btn-danger">Excluir esta Meta</button>` : ''}
             `;
-            
-            modal.classList.remove('hidden');
         }
 
-        function closeEdit() {
+        function closeModal() {
             document.getElementById('edit-modal-overlay').classList.add('hidden');
             editingGoalId = null;
         }
 
-        function saveEdit() {
-            if (!editingGoalId) return;
-            const id = editingGoalId;
-            
-            goals[id].title = document.getElementById('ed-title').value;
-            goals[id].target = parseFloat(document.getElementById('ed-target').value);
-            goals[id].unit = document.getElementById('ed-unit').value;
-            goals[id].deadline = document.getElementById('ed-date').value;
-
-            closeEdit();
-            save();
-        }
-
-        function addMS() {
+        function addTempMS() {
             const val = document.getElementById('new-ms-val').value;
             const lbl = document.getElementById('new-ms-lbl').value;
             if (val && lbl) {
-                goals[editingGoalId].milestones.push({ val: parseFloat(val), label: lbl });
-                goals[editingGoalId].milestones.sort((a,b) => a.val - b.val);
-                openEdit(editingGoalId); // Re-renderiza form
+                window.tempMilestones.push({ val: parseFloat(val), label: lbl });
+                window.tempMilestones.sort((a,b) => a.val - b.val);
+                const currentData = getFormData();
+                currentData.milestones = window.tempMilestones;
+                renderModalForm(currentData, editingGoalId !== null);
             }
         }
 
-        function removeMS(idx) {
-            goals[editingGoalId].milestones.splice(idx, 1);
-            openEdit(editingGoalId);
+        function removeTempMS(idx) {
+            window.tempMilestones.splice(idx, 1);
+            const currentData = getFormData();
+            currentData.milestones = window.tempMilestones;
+            renderModalForm(currentData, editingGoalId !== null);
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', render);
+        function getFormData() {
+            return {
+                title: document.getElementById('ed-title') ? document.getElementById('ed-title').value : '',
+                target: document.getElementById('ed-target') ? parseFloat(document.getElementById('ed-target').value) : 0,
+                unit: document.getElementById('ed-unit') ? document.getElementById('ed-unit').value : '',
+                deadline: document.getElementById('ed-date') ? document.getElementById('ed-date').value : '',
+                color: document.getElementById('ed-color') ? document.getElementById('ed-color').value : 'blue',
+                icon: document.getElementById('ed-icon') ? document.getElementById('ed-icon').value : 'target'
+            };
+        }
 
+        function saveModalForm() {
+            const formData = getFormData();
+            
+            if(!formData.title || !formData.target) {
+                alert("Por favor, preencha o Título e o Alvo.");
+                return;
+            }
+
+            if (editingGoalId) {
+                const id = editingGoalId;
+                goals[id] = { ...goals[id], ...formData, milestones: window.tempMilestones, lastUpdated: new Date().toISOString() };
+            } else {
+                const newId = 'goal_' + Date.now();
+                goals[newId] = {
+                    id: newId, ...formData, current: 0, milestones: window.tempMilestones, lastUpdated: new Date().toISOString()
+                };
+            }
+
+            closeModal();
+            save();
+        }
+
+        function deleteGoal() {
+            if (editingGoalId && confirm("Tem certeza que deseja excluir esta meta?")) {
+                delete goals[editingGoalId];
+                closeModal();
+                save();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>
