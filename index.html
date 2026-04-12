@@ -11,239 +11,128 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
     <style>
-        /* --- 1. Reset e Base --- */
+        /* --- Reset e Base --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
             color: #1e293b;
             line-height: 1.4;
-            padding-bottom: 2rem;
+            padding-bottom: 3rem;
             min-height: 100vh;
         }
 
-        /* --- 2. Layout Principal --- */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 1.5rem; /* Reduzido para ganhar espaço no topo */
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1rem 1.5rem; }
 
+        /* --- Header --- */
         header {
-            text-align: center;
-            margin-bottom: 1.5rem; /* Margem reduzida */
-            padding: 1rem 0; /* Padding reduzido */
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.5);
-            backdrop-filter: blur(10px);
+            text-align: center; margin-bottom: 1.5rem; padding: 1rem 0; background: white;
+            border-radius: 1rem; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); position: relative;
         }
-        header h1 {
-            font-size: 1.75rem; /* Título bem menor */
-            font-weight: 800;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.025em;
+        header h1 { font-size: 1.75rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.25rem; letter-spacing: -0.025em; }
+        header p { color: #64748b; font-size: 0.9rem; font-weight: 500; }
+        
+        .btn-add-cycle {
+            position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%);
+            background: #0f172a; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;
         }
-        header p { color: #64748b; font-size: 0.9rem; font-weight: 500; } /* Subtítulo menor */
+        .btn-add-cycle:hover { background: #334155; }
 
-        /* Grid Responsivo e Mais Denso */
-        .grid {
-            display: grid;
-            /* Força os cartões a serem um pouco mais estreitos para caber 4 por linha mais facilmente */
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem; /* Espaço entre cartões reduzido */
-        }
-        @media (min-width: 1200px) {
-            .grid { grid-template-columns: repeat(4, 1fr); } /* Garante 4 colunas em telas grandes */
-        }
-
-        /* --- 3. Cartões (Cards) --- */
-        .card {
-            background: white;
-            border-radius: 1rem; /* Borda levemente menor */
-            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 100%;
-            position: relative;
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            border-color: #cbd5e1;
-        }
-
-        .card-header {
-            padding: 1rem; /* Padding interno reduzido drasticamente */
-            flex: 1;
-            position: relative;
+        /* --- Seção de Ciclos --- */
+        .cycle-section {
+            background: rgba(255,255,255,0.4); padding: 1.5rem; border-radius: 1.25rem; border: 1px dashed #cbd5e1; transition: all 0.3s;
         }
         
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem; /* Margem reduzida */
+        /* Destaque para o Ciclo Atual */
+        .cycle-section.is-current {
+            background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+            border: 2px solid #4f46e5;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+            margin-bottom: 2rem;
         }
 
-        .icon-wrapper {
-            padding: 0.6rem; /* Ícone menor */
-            border-radius: 0.75rem;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center;
+        /* Estilo de Pasta (Diretório) para Outros Ciclos */
+        .other-cycles-container {
+            margin-top: 3rem; border-top: 2px dashed #cbd5e1; padding-top: 2rem;
         }
+        .other-cycles-title {
+            font-size: 0.9rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .cycle-section.is-directory {
+            margin-bottom: 1rem; background: white; padding: 1rem 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;
+        }
+        .cycle-section.is-directory:hover { border-color: #cbd5e1; }
+        .cycle-section.is-directory .cycle-header { margin-bottom: 0; padding-bottom: 0; border-bottom: none; transition: all 0.2s; }
+        
+        /* Quando o diretório está aberto */
+        .cycle-section.is-directory.is-expanded { cursor: default; }
+        .cycle-section.is-directory.is-expanded .cycle-header { margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #cbd5e1; }
 
-        .meta-info h2 {
-            font-size: 1rem; /* Fonte do título da meta menor */
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 0.25rem;
-            color: #1e293b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 140px;
-        }
-        .meta-info span {
-            font-size: 0.7rem; /* Texto de dias restantes menor */
-            font-weight: 600;
-            color: #64748b;
-            display: flex; align-items: center; gap: 3px;
-            background: rgba(255,255,255,0.6);
-            padding: 0.15rem 0.4rem;
-            border-radius: 0.5rem;
-            width: fit-content;
-        }
+        .cycle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #cbd5e1; }
+        .cycle-title-wrap { display: flex; align-items: center; gap: 0.75rem; }
+        .cycle-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem; }
+        .cycle-meta { background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 4px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+        
+        .badge-current { background: #4f46e5; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; margin-left: 0.5rem; display: inline-flex; align-items: center; gap: 4px;}
+        .header-actions { display: flex; gap: 0.5rem; align-items: center; }
 
-        .btn-edit {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 0.4rem;
-            border-radius: 50%;
-            cursor: pointer;
-            color: #94a3b8;
-            transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .btn-edit:hover { color: #4f46e5; border-color: #4f46e5; transform: rotate(15deg); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; min-height: 50px; }
+        @media (min-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 0.5rem; /* Margem reduzida */
-        }
+        .sortable-ghost { opacity: 0.4; transform: scale(0.95); }
+        .sortable-drag { cursor: grabbing !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2) !important; z-index: 10; }
+
+        /* --- Cartões --- */
+        .card { background: white; border-radius: 1rem; box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; height: 100%; position: relative; }
+        .card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+        .card-header { padding: 1rem; flex: 1; position: relative; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .icon-wrapper { padding: 0.6rem; border-radius: 0.75rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
+        .meta-info h2 { font-size: 1rem; font-weight: 700; line-height: 1.1; margin-bottom: 0.25rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+        .meta-info span { font-size: 0.7rem; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 3px; background: rgba(255,255,255,0.6); padding: 0.15rem 0.4rem; border-radius: 0.5rem; width: fit-content; }
+        
+        .btn-action { background: white; border: 1px solid #e2e8f0; padding: 0.4rem; border-radius: 0.5rem; cursor: pointer; color: #64748b; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-action:hover { color: #4f46e5; border-color: #4f46e5; background: #f8fafc; }
+        .drag-handle { cursor: grab; } .drag-handle:active { cursor: grabbing; }
+
+        .stats-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
         .current-val { font-size: 1.4rem; font-weight: 800; color: #0f172a; letter-spacing: -0.025em; }
         .target-val { font-size: 0.8rem; font-weight: 600; color: #64748b; }
 
-        /* Barra de Progresso */
-        .progress-track {
-            height: 0.6rem; /* Barra mais fina */
-            background-color: rgba(0,0,0,0.06);
-            border-radius: 9999px;
-            position: relative;
-            margin-bottom: 0.4rem;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: 9999px;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 1;
-        }
-
-        /* Marcos */
-        .milestone {
-            position: absolute; top: 0; bottom: 0; width: 2px;
-            z-index: 2; cursor: help;
-        }
+        .progress-track { height: 0.6rem; background-color: rgba(0,0,0,0.06); border-radius: 9999px; position: relative; margin-bottom: 0.4rem; }
+        .progress-fill { height: 100%; border-radius: 9999px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0; z-index: 1; }
+        .milestone { position: absolute; top: 0; bottom: 0; width: 2px; z-index: 2; cursor: help; }
         .milestone-line { height: 100%; width: 100%; background-color: rgba(255,255,255,0.6); }
-        .milestone-dot {
-            position: absolute; top: -3px; left: -4px;
-            width: 10px; height: 10px; border-radius: 50%;
-            border: 2px solid white; background-color: #cbd5e1;
-        }
+        .milestone-dot { position: absolute; top: -3px; left: -4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; background-color: #cbd5e1; }
         .milestone.reached .milestone-dot { background-color: #fbbf24; border-color: #fffbeb; }
-        
-        .tooltip {
-            visibility: hidden; background-color: #0f172a; color: white;
-            padding: 4px 8px; border-radius: 4px;
-            position: absolute; bottom: 150%; left: 50%;
-            transform: translateX(-50%) translateY(5px);
-            white-space: nowrap; font-size: 0.7rem; font-weight: 600;
-            opacity: 0; transition: all 0.2s; z-index: 10; pointer-events: none;
-        }
+        .tooltip { visibility: hidden; background-color: #0f172a; color: white; padding: 4px 8px; border-radius: 4px; position: absolute; bottom: 150%; left: 50%; transform: translateX(-50%) translateY(5px); white-space: nowrap; font-size: 0.7rem; font-weight: 600; opacity: 0; transition: all 0.2s; z-index: 10; pointer-events: none; }
         .milestone:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        .pct-label { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #94a3b8; }
 
-        .pct-label {
-            display: flex; justify-content: space-between;
-            font-size: 0.7rem; font-weight: 700; color: #94a3b8;
-        }
-
-        /* Footer de Controles */
-        .card-footer {
-            padding: 0.75rem 1rem; /* Reduzido */
-            background-color: #f8fafc;
-            border-top: 1px solid #f1f5f9;
-        }
+        .card-footer { padding: 0.75rem 1rem; background-color: #f8fafc; border-top: 1px solid #f1f5f9; }
         .control-group { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
-        
-        .btn-control {
-            width: 2.25rem; height: 2.25rem; /* Botões menores */
-            display: flex; align-items: center; justify-content: center;
-            background: white; border: 1px solid #cbd5e1;
-            border-radius: 0.5rem; cursor: pointer;
-            color: #475569; font-weight: bold; font-size: 1rem;
-            transition: all 0.2s;
-        }
+        .btn-control { width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer; color: #475569; font-weight: bold; font-size: 1rem; transition: all 0.2s; }
         .btn-control:hover { background: #f1f5f9; border-color: #94a3b8; color: #0f172a; }
-
-        .input-control {
-            flex: 1; text-align: center;
-            border: 1px solid #cbd5e1; border-radius: 0.5rem;
-            background: white; font-weight: 700;
-            color: #1e293b; font-size: 0.9rem;
-            min-width: 0; /* Evita que o input estoure o layout */
-        }
+        .input-control { flex: 1; text-align: center; border: 1px solid #cbd5e1; border-radius: 0.5rem; background: white; font-weight: 700; color: #1e293b; font-size: 0.9rem; min-width: 0; }
         .input-control:focus { outline: none; border-color: #4f46e5; }
-
-        /* Marcador de Data */
-        .update-badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 4px 8px; background-color: #e2e8f0; color: #475569;
-            border-radius: 12px; font-size: 0.65rem; font-weight: 600;
-            width: 100%; justify-content: center;
-        }
+        .update-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background-color: #e2e8f0; color: #475569; border-radius: 12px; font-size: 0.65rem; font-weight: 600; width: 100%; justify-content: center; }
         .update-badge i { width: 12px; height: 12px; }
         .update-badge.recent { background-color: #dcfce7; color: #166534; }
 
-        /* Cartão "Adicionar Nova Meta" */
-        .card-add {
-            border: 2px dashed #cbd5e1; background: transparent; box-shadow: none;
-            justify-content: center; align-items: center; cursor: pointer;
-            min-height: 180px; color: #64748b;
-        }
+        .card-add { border: 2px dashed #cbd5e1; background: transparent; box-shadow: none; justify-content: center; align-items: center; cursor: pointer; min-height: 180px; color: #64748b; }
         .card-add:hover { border-color: #4f46e5; color: #4f46e5; background: rgba(79, 70, 229, 0.02); }
-        .card-add i { width: 36px; height: 36px; margin-bottom: 0.5rem; }
-        .card-add span { font-size: 1rem; font-weight: 700; }
 
-        /* Modal e Cores (Mantidos idênticos, apenas listados para funcionar) */
-        .edit-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; backdrop-filter: blur(4px); padding: 1rem; }
+        /* Modais */
+        .edit-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; backdrop-filter: blur(4px); padding: 1rem; }
         .edit-modal { background: white; width: 100%; max-width: 450px; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
         .edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; }
-        .edit-header h3 { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+        .edit-header h3 { font-size: 1.5rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem; }
         .form-group { margin-bottom: 1.25rem; }
         .form-group label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
         .form-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.75rem; font-size: 0.95rem; font-family: inherit; font-weight: 500; background: #f8fafc; transition: all 0.2s; }
@@ -252,7 +141,8 @@
         .btn-danger { width: 100%; padding: 1rem; background: transparent; color: #ef4444; border: 1px solid #f87171; border-radius: 0.75rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; transition: all 0.2s; }
         .milestone-list { list-style: none; max-height: 120px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-top: 0.75rem; }
         .milestone-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; background: white; font-weight: 500; }
-        
+
+        /* Temas */
         .theme-emerald .card-header { background: linear-gradient(145deg, #ecfdf5, #d1fae5); } .theme-emerald .icon-wrapper { color: #059669; } .theme-emerald .progress-fill { background: linear-gradient(90deg, #34d399, #059669); }
         .theme-blue .card-header { background: linear-gradient(145deg, #eff6ff, #dbeafe); } .theme-blue .icon-wrapper { color: #2563eb; } .theme-blue .progress-fill { background: linear-gradient(90deg, #60a5fa, #2563eb); }
         .theme-cyan .card-header { background: linear-gradient(145deg, #ecfeff, #cffafe); } .theme-cyan .icon-wrapper { color: #0891b2; } .theme-cyan .progress-fill { background: linear-gradient(90deg, #22d3ee, #0891b2); }
@@ -274,11 +164,13 @@
     <div class="container">
         <header>
             <h1><i data-lucide="target" style="width: 28px; height: 28px; color: #4f46e5;"></i> Painel de Metas</h1>
-            <p>Acompanhamento detalhado das suas conquistas</p>
+            <p>Acompanhamento detalhado focado no seu ciclo atual</p>
+            <button class="btn-add-cycle" onclick="openCycleModal()">
+                <i data-lucide="folder-plus" style="width: 16px; height: 16px;"></i> Novo Ciclo
+            </button>
         </header>
 
-        <div id="grid-container" class="grid">
-            </div>
+        <div id="dashboard-container"></div>
     </div>
 
     <div id="edit-modal-overlay" class="edit-overlay hidden">
@@ -291,238 +183,308 @@
         </div>
     </div>
 
+    <div id="cycle-modal-overlay" class="edit-overlay hidden">
+        <div class="edit-modal">
+            <div class="edit-header">
+                <h3 id="cycle-modal-title"><i data-lucide="folder"></i> Gerenciar Ciclo</h3>
+                <button onclick="closeCycleModal()" style="background:none; border:none; font-size:2rem; line-height:1; color:#94a3b8; cursor:pointer;">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Nome do Ciclo / Pasta</label>
+                <input id="ed-cycle-title" class="form-input" type="text" placeholder="Ex: Metas 2025, Projetos Q1...">
+            </div>
+            <div class="form-group">
+                <label>Prazo Geral do Ciclo</label>
+                <input id="ed-cycle-date" class="form-input" type="date">
+            </div>
+            <button onclick="saveCycleModal()" class="btn-primary">Salvar Ciclo</button>
+            <div id="cycle-delete-btn-container"></div>
+        </div>
+    </div>
+
     <div id="confetti">
         <div class="confetti-msg">🎉 Meta Atingida! Parabéns!</div>
     </div>
 
     <script>
-        // --- 1. Dados Iniciais (Agora com 8 metas de exemplo preenchidas) ---
+        // --- 1. Dados e Estado ---
         const INITIAL_DATA = {
-            financial: { id: 'financial', title: 'Meta Financeira', icon: 'trending-up', color: 'emerald', current: 0, target: 10000, unit: 'R$', deadline: '2025-12-31', milestones: [{ val: 5000, label: 'Emergência' }], lastUpdated: null },
-            books: { id: 'books', title: 'Livros Lidos', icon: 'book-open', color: 'blue', current: 1, target: 12, unit: 'Livros', deadline: '2025-12-31', milestones: [], lastUpdated: null },
-            movies: { id: 'movies', title: 'Filmes Culturais', icon: 'film', color: 'cyan', current: 3, target: 24, unit: 'Filmes', deadline: '2025-12-31', milestones: [], lastUpdated: null },
-            rosary: { id: 'rosary', title: 'Terços Rezados', icon: 'circle-dot', color: 'rose', current: 15, target: 365, unit: 'Terços', deadline: '2025-12-31', milestones: [{ val: 100, label: '100 Terços' }], lastUpdated: null },
-            water: { id: 'water', title: 'Beber Água', icon: 'droplet', color: 'cyan', current: 1, target: 3, unit: 'Litros', deadline: '2025-12-31', milestones: [], lastUpdated: null },
-            workout: { id: 'workout', title: 'Dias de Treino', icon: 'dumbbell', color: 'amber', current: 12, target: 200, unit: 'Dias', deadline: '2025-12-31', milestones: [{ val: 100, label: 'Metade' }], lastUpdated: null },
-            study: { id: 'study', title: 'Horas de Estudo', icon: 'brain', color: 'violet', current: 20, target: 100, unit: 'Horas', deadline: '2025-12-31', milestones: [], lastUpdated: null },
-            meditation: { id: 'meditation', title: 'Meditação', icon: 'flower', color: 'emerald', current: 5, target: 30, unit: 'Dias', deadline: '2025-12-31', milestones: [], lastUpdated: null }
+            currentCycleId: 'cycle_default',
+            cycles: [
+                { id: 'cycle_default', title: 'Metas Gerais 2025', deadline: '2025-12-31' },
+                { id: 'cycle_q1', title: 'Projetos de Q1', deadline: '2025-03-31' }
+            ],
+            goals: {
+                financial: { id: 'financial', cycleId: 'cycle_default', order: 0, title: 'Meta Financeira', icon: 'trending-up', color: 'emerald', current: 0, target: 10000, unit: 'R$', deadline: '2025-12-31', milestones: [{ val: 5000, label: 'Emergência' }], lastUpdated: null },
+                books: { id: 'books', cycleId: 'cycle_default', order: 1, title: 'Livros Lidos', icon: 'book-open', color: 'blue', current: 1, target: 12, unit: 'Livros', deadline: '2025-12-31', milestones: [], lastUpdated: null },
+                workout: { id: 'workout', cycleId: 'cycle_q1', order: 0, title: 'Dias de Treino', icon: 'dumbbell', color: 'amber', current: 12, target: 60, unit: 'Dias', deadline: '2025-03-31', milestones: [{ val: 30, label: 'Metade' }], lastUpdated: null }
+            }
         };
 
-        // --- 2. Estado ---
-        let goals = JSON.parse(localStorage.getItem('userGoals_v4')) || INITIAL_DATA;
-        let editingGoalId = null;
-
-        // --- 3. Renderização ---
-        function render() {
-            const container = document.getElementById('grid-container');
-            container.innerHTML = '';
-
-            Object.values(goals).forEach(goal => {
-                const themeClass = `theme-${goal.color}`;
-                const pct = Math.min(100, Math.max(0, (goal.current / goal.target) * 100));
-                
-                const today = new Date();
-                const due = new Date(goal.deadline);
-                const diff = due - today;
-                const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                const daysText = daysLeft > 0 ? `${daysLeft} dias restantes` : 'Prazo encerrado';
-
-                let lastUpdatedText = "Sem alteração recente";
-                let isRecent = false;
-
-                if (goal.lastUpdated) {
-                    const dateObj = new Date(goal.lastUpdated);
-                    const now = new Date();
-                    const diffHours = Math.abs(now - dateObj) / 36e5;
-                    
-                    if (diffHours < 24) {
-                        lastUpdatedText = `Hoje, às ${dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-                        isRecent = true;
-                    } else {
-                        lastUpdatedText = `Última: ${dateObj.toLocaleDateString('pt-BR')}`;
-                    }
+        let appData = JSON.parse(localStorage.getItem('userGoals_v6'));
+        
+        // Migração de versões anteriores
+        if (!appData) {
+            const oldData = JSON.parse(localStorage.getItem('userGoals_v5'));
+            if (oldData) {
+                appData = oldData;
+                if(!appData.currentCycleId && appData.cycles.length > 0) {
+                    appData.currentCycleId = appData.cycles[0].id;
                 }
-
-                const currFmt = goal.unit === 'R$' ? `R$ ${goal.current.toLocaleString('pt-BR')}` : goal.current;
-                const targFmt = goal.unit === 'R$' ? `R$ ${goal.target.toLocaleString('pt-BR')}` : `${goal.target} ${goal.unit}`;
-
-                const milestonesHTML = goal.milestones.map(m => {
-                    const mPct = Math.min(100, Math.max(0, (m.val / goal.target) * 100));
-                    const reached = goal.current >= m.val ? 'reached' : '';
-                    return `
-                        <div class="milestone ${reached}" style="left: ${mPct}%">
-                            <div class="milestone-line"></div>
-                            <div class="milestone-dot"></div>
-                            <div class="tooltip">${m.label} (${m.val})</div>
-                        </div>
-                    `;
-                }).join('');
-
-                const cardHTML = `
-                    <div class="card ${themeClass}">
-                        <div class="card-header">
-                            <div class="header-row">
-                                <div style="display:flex; gap:0.75rem; align-items:center;">
-                                    <div class="icon-wrapper">
-                                        <i data-lucide="${goal.icon}" style="width: 20px; height: 20px;"></i>
-                                    </div>
-                                    <div class="meta-info">
-                                        <h2 title="${goal.title}">${goal.title}</h2>
-                                        <span><i data-lucide="calendar" style="width:10px; height:10px;"></i> ${daysText}</span>
-                                    </div>
-                                </div>
-                                <button class="btn-edit" onclick="openModal('${goal.id}')" title="Editar Meta">
-                                    <i data-lucide="edit-2" style="width:14px; height:14px;"></i>
-                                </button>
-                            </div>
-
-                            <div class="stats-row">
-                                <span class="current-val">${currFmt}</span>
-                                <span class="target-val">/ ${targFmt}</span>
-                            </div>
-
-                            <div class="progress-track">
-                                <div class="progress-fill" style="width: ${pct}%"></div>
-                                ${milestonesHTML}
-                            </div>
-
-                            <div class="pct-label">
-                                <span>0%</span>
-                                <span style="color: ${pct >= 100 ? '#059669' : 'inherit'}">${pct.toFixed(0)}%</span>
-                            </div>
-                        </div>
-
-                        <div class="card-footer">
-                            <div class="control-group">
-                                <button class="btn-control" onclick="update('${goal.id}', -1)">-</button>
-                                <input class="input-control" type="number" value="${goal.current}" 
-                                       onchange="updateInput('${goal.id}', this.value)">
-                                <button class="btn-control" onclick="update('${goal.id}', 1)">+</button>
-                            </div>
-                            
-                            <div class="update-badge ${isRecent ? 'recent' : ''}">
-                                <i data-lucide="clock"></i>
-                                ${lastUpdatedText}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHTML;
-            });
-
-            container.innerHTML += `
-                <div class="card card-add" onclick="openModal()">
-                    <i data-lucide="plus-circle"></i>
-                    <span>Adicionar Meta</span>
-                </div>
-            `;
-            
-            lucide.createIcons();
+            } else {
+                appData = INITIAL_DATA;
+            }
+            localStorage.setItem('userGoals_v6', JSON.stringify(appData));
         }
 
-        // --- 4. Lógica de Atualização Rápida ---
-        function update(id, delta) {
-            const val = parseFloat(goals[id].current) + delta;
-            updateInput(id, val);
-        }
+        let editingGoalId = null;
+        let editingCycleId = null;
+        let sortableInstances = []; 
+        let expandedFolders = new Set(); // Guarda os IDs dos ciclos recolhidos que foram abertos
 
-        function updateInput(id, value) {
-            let val = parseFloat(value);
-            if (isNaN(val) || val < 0) val = 0;
+        // --- 2. Renderização ---
+        function render() {
+            const container = document.getElementById('dashboard-container');
+            container.innerHTML = '';
             
-            const goal = goals[id];
-            
-            if (val >= goal.target && goal.current < goal.target) {
-                showConfetti();
+            sortableInstances.forEach(inst => inst.destroy());
+            sortableInstances = [];
+
+            // Identifica Ciclo Atual e Outros Ciclos
+            const currentCycle = appData.cycles.find(c => c.id === appData.currentCycleId) || appData.cycles[0];
+            const otherCycles = appData.cycles.filter(c => c.id !== currentCycle.id);
+
+            let html = '';
+
+            // 1. Renderiza Ciclo Atual (Sempre visível e em destaque)
+            if (currentCycle) {
+                html += renderCycleHTML(currentCycle, true, true);
             }
 
-            goals[id].current = val;
-            goals[id].lastUpdated = new Date().toISOString();
-            save();
+            // 2. Renderiza Outros Ciclos (Como diretórios sanfonados)
+            if (otherCycles.length > 0) {
+                html += `<div class="other-cycles-container">
+                            <h3 class="other-cycles-title"><i data-lucide="archive" style="width: 18px; height: 18px;"></i> Diretório de Ciclos</h3>`;
+                
+                otherCycles.forEach(cycle => {
+                    const isExpanded = expandedFolders.has(cycle.id);
+                    html += renderCycleHTML(cycle, false, isExpanded);
+                });
+                
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+            lucide.createIcons();
+            initDragAndDrop();
         }
 
-        function save() {
-            localStorage.setItem('userGoals_v4', JSON.stringify(goals));
+        function renderCycleHTML(cycle, isCurrent, isExpanded) {
+            const cycleGoals = Object.values(appData.goals)
+                .filter(g => g.cycleId === cycle.id)
+                .sort((a, b) => a.order - b.order);
+
+            const sectionClass = isCurrent ? 'cycle-section is-current' : `cycle-section is-directory ${isExpanded ? 'is-expanded' : ''}`;
+            
+            // Lógica de ícones do header
+            let titleIcon = '';
+            if (isCurrent) titleIcon = '<i data-lucide="star" style="color: #fbbf24; fill: #fef08a;"></i>';
+            else if (isExpanded) titleIcon = '<i data-lucide="folder-open" style="color: #4f46e5;"></i>';
+            else titleIcon = '<i data-lucide="folder" style="color: #64748b;"></i>';
+
+            // Ações do Header
+            let actionsHtml = '';
+            if (!isCurrent) {
+                actionsHtml += `<button class="btn-action" onclick="setCurrentCycle('${cycle.id}', event)" title="Tornar Ciclo Atual"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>`;
+            }
+            actionsHtml += `
+                <button class="btn-action" onclick="openCycleModal('${cycle.id}', event)" title="Editar Ciclo">
+                    <i data-lucide="settings-2" style="width: 16px; height: 16px;"></i>
+                </button>
+            `;
+            if (!isCurrent) {
+                actionsHtml += `<button class="btn-action"><i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" style="width: 16px; height: 16px;"></i></button>`;
+            }
+
+            return `
+                <div class="${sectionClass}" ${!isCurrent ? `onclick="toggleFolder('${cycle.id}')"` : ''}>
+                    <div class="cycle-header">
+                        <div class="cycle-title-wrap">
+                            <h2 class="cycle-title">
+                                ${titleIcon} ${cycle.title}
+                                ${isCurrent ? '<span class="badge-current">Ciclo Atual</span>' : ''}
+                            </h2>
+                            <span class="cycle-meta"><i data-lucide="calendar" style="width:12px; height:12px;"></i> ${formatDateLabel(cycle.deadline)}</span>
+                        </div>
+                        <div class="header-actions" onclick="event.stopPropagation()">${actionsHtml}</div>
+                    </div>
+                    
+                    <div class="grid" id="grid-${cycle.id}" data-cycle-id="${cycle.id}" style="${!isExpanded ? 'display: none;' : ''}">
+                        ${cycleGoals.map(goal => generateCardHTML(goal, cycle)).join('')}
+                        <div class="card card-add ignore-drag" onclick="openModal(null, '${cycle.id}', event)">
+                            <i data-lucide="plus-circle"></i>
+                            <span>Adicionar Meta Aqui</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Funções de UI dos Ciclos
+        function toggleFolder(cycleId) {
+            if (expandedFolders.has(cycleId)) expandedFolders.delete(cycleId);
+            else expandedFolders.add(cycleId);
             render();
         }
 
-        function showConfetti() {
-            const el = document.getElementById('confetti');
-            el.classList.add('active');
-            setTimeout(() => el.classList.remove('active'), 3500);
+        function setCurrentCycle(cycleId, event) {
+            if(event) event.stopPropagation();
+            appData.currentCycleId = cycleId;
+            expandedFolders.delete(cycleId); // Tira de "expandidos" pois agora ele é o principal
+            saveToStorage();
+            render();
         }
 
-        // --- 5. Lógica de Modal ---
-        function openModal(id = null) {
+        function generateCardHTML(goal, cycle) {
+            const themeClass = `theme-${goal.color}`;
+            const pct = Math.min(100, Math.max(0, (goal.current / goal.target) * 100));
+            const due = new Date(goal.deadline || cycle.deadline);
+            const diff = due - new Date();
+            const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            const daysText = daysLeft > 0 ? `${daysLeft} dias rest.` : 'Encerrado';
+
+            let lastUpd = "Sem alteração recente";
+            let isRecent = false;
+            if (goal.lastUpdated) {
+                const dateObj = new Date(goal.lastUpdated);
+                if (Math.abs(new Date() - dateObj) / 36e5 < 24) {
+                    lastUpd = `Hoje, às ${dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                    isRecent = true;
+                } else lastUpd = `Última: ${dateObj.toLocaleDateString('pt-BR')}`;
+            }
+
+            const currFmt = goal.unit === 'R$' ? `R$ ${goal.current.toLocaleString('pt-BR')}` : goal.current;
+            const targFmt = goal.unit === 'R$' ? `R$ ${goal.target.toLocaleString('pt-BR')}` : `${goal.target} ${goal.unit}`;
+
+            const milestonesHTML = (goal.milestones || []).map(m => {
+                const mPct = Math.min(100, Math.max(0, (m.val / goal.target) * 100));
+                return `<div class="milestone ${goal.current >= m.val ? 'reached' : ''}" style="left: ${mPct}%"><div class="milestone-line"></div><div class="milestone-dot"></div><div class="tooltip">${m.label} (${m.val})</div></div>`;
+            }).join('');
+
+            return `
+                <div class="card ${themeClass}" data-goal-id="${goal.id}" onclick="event.stopPropagation()">
+                    <div class="card-header">
+                        <div class="header-row">
+                            <div style="display:flex; gap:0.75rem; align-items:center;">
+                                <div class="icon-wrapper"><i data-lucide="${goal.icon}" style="width: 20px; height: 20px;"></i></div>
+                                <div class="meta-info">
+                                    <h2 title="${goal.title}">${goal.title}</h2>
+                                    <span><i data-lucide="clock" style="width:10px; height:10px;"></i> ${daysText}</span>
+                                </div>
+                            </div>
+                            <div class="header-actions">
+                                <button class="btn-action" onclick="openModal('${goal.id}')"><i data-lucide="edit-2" style="width:14px; height:14px;"></i></button>
+                                <button class="btn-action drag-handle"><i data-lucide="grip-vertical" style="width:14px; height:14px;"></i></button>
+                            </div>
+                        </div>
+                        <div class="stats-row"><span class="current-val">${currFmt}</span><span class="target-val">/ ${targFmt}</span></div>
+                        <div class="progress-track"><div class="progress-fill" style="width: ${pct}%"></div>${milestonesHTML}</div>
+                        <div class="pct-label"><span>0%</span><span style="color: ${pct >= 100 ? '#059669' : 'inherit'}">${pct.toFixed(0)}%</span></div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="control-group">
+                            <button class="btn-control" onclick="update('${goal.id}', -1)">-</button>
+                            <input class="input-control" type="number" value="${goal.current}" onchange="updateInput('${goal.id}', this.value)">
+                            <button class="btn-control" onclick="update('${goal.id}', 1)">+</button>
+                        </div>
+                        <div class="update-badge ${isRecent ? 'recent' : ''}"><i data-lucide="history"></i> ${lastUpd}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Drag and Drop ---
+        function initDragAndDrop() {
+            const grids = document.querySelectorAll('.grid');
+            grids.forEach(grid => {
+                const sortable = new Sortable(grid, {
+                    group: 'shared', 
+                    animation: 150, handle: '.drag-handle', filter: '.ignore-drag',
+                    ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
+                    onEnd: function () { saveNewOrder(); }
+                });
+                sortableInstances.push(sortable);
+            });
+        }
+
+        function saveNewOrder() {
+            document.querySelectorAll('.grid').forEach(grid => {
+                const cycleId = grid.dataset.cycleId;
+                grid.querySelectorAll('.card[data-goal-id]').forEach((card, index) => {
+                    const goalId = card.dataset.goalId;
+                    if (appData.goals[goalId]) {
+                        appData.goals[goalId].cycleId = cycleId;
+                        appData.goals[goalId].order = index;
+                    }
+                });
+            });
+            saveToStorage(); 
+        }
+
+        // --- Updates & Utils ---
+        function update(id, delta) { updateInput(id, parseFloat(appData.goals[id].current) + delta); }
+        function updateInput(id, value) {
+            let val = parseFloat(value);
+            if (isNaN(val) || val < 0) val = 0;
+            if (val >= appData.goals[id].target && appData.goals[id].current < appData.goals[id].target) showConfetti();
+            appData.goals[id].current = val;
+            appData.goals[id].lastUpdated = new Date().toISOString();
+            saveToStorage(); render();
+        }
+        function saveToStorage() { localStorage.setItem('userGoals_v6', JSON.stringify(appData)); }
+        function showConfetti() { const el = document.getElementById('confetti'); el.classList.add('active'); setTimeout(() => el.classList.remove('active'), 3500); }
+        function formatDateLabel(ds) { if (!ds) return 'Sem Prazo'; const [y, m, d] = ds.split('-'); return `${d}/${m}/${y}`; }
+
+        // --- Modais ---
+        function openModal(id = null, defaultCycleId = null, event) {
+            if(event) event.stopPropagation();
             editingGoalId = id;
             const isEdit = id !== null;
-            const modal = document.getElementById('edit-modal-overlay');
+            document.getElementById('modal-title').innerHTML = isEdit ? '<i data-lucide="edit-3"></i> Editar Meta' : '<i data-lucide="plus-circle"></i> Criar Nova Meta';
             
-            document.getElementById('modal-title').innerText = isEdit ? 'Editar Meta' : 'Criar Nova Meta';
-
-            const goal = isEdit ? goals[id] : {
-                title: '', target: 10, unit: '', deadline: '2025-12-31', 
-                color: 'blue', icon: 'target', milestones: []
+            const goal = isEdit ? appData.goals[id] : {
+                title: '', target: 10, unit: '', deadline: '', color: 'blue', icon: 'target', milestones: [], cycleId: defaultCycleId || appData.currentCycleId
             };
-            
-            window.tempMilestones = [...goal.milestones]; 
-
+            window.tempMilestones = [...(goal.milestones || [])]; 
             renderModalForm(goal, isEdit);
-            modal.classList.remove('hidden');
+            document.getElementById('edit-modal-overlay').classList.remove('hidden');
+            lucide.createIcons();
         }
 
         function renderModalForm(goal, isEdit) {
             const content = document.getElementById('edit-form-content');
-            
-            const msList = window.tempMilestones.map((m, idx) => `
-                <li class="milestone-item">
-                    <span><strong>${m.val}</strong>: ${m.label}</span>
-                    <button type="button" onclick="removeTempMS(${idx})" style="color:#ef4444; border:none; background:none; cursor:pointer; font-size:1.2rem;">&times;</button>
-                </li>
-            `).join('');
+            const cycleOpts = appData.cycles.map(c => `<option value="${c.id}" ${goal.cycleId === c.id ? 'selected' : ''}>${c.title}</option>`).join('');
+            const msList = window.tempMilestones.map((m, idx) => `<li class="milestone-item"><span><strong>${m.val}</strong>: ${m.label}</span><button type="button" onclick="removeTempMS(${idx})" style="color:#ef4444; border:none; background:none; cursor:pointer; font-size:1.2rem;">&times;</button></li>`).join('');
 
             content.innerHTML = `
-                <div class="form-group">
-                    <label>Título da Meta</label>
-                    <input id="ed-title" class="form-input" type="text" value="${goal.title}" placeholder="Ex: Ler mais livros">
-                </div>
-                
+                <div class="form-group"><label>Ciclo / Pasta</label><select id="ed-cycle" class="form-input">${cycleOpts}</select></div>
+                <div class="form-group"><label>Título da Meta</label><input id="ed-title" class="form-input" type="text" value="${goal.title}"></div>
                 <div class="row">
-                    <div class="form-group" style="flex:1">
-                        <label>Alvo / Objetivo</label>
-                        <input id="ed-target" class="form-input" type="number" value="${goal.target}">
-                    </div>
-                    <div class="form-group" style="flex:1">
-                        <label>Unidade</label>
-                        <input id="ed-unit" class="form-input" type="text" value="${goal.unit}" placeholder="Ex: Pag, R$, Km">
-                    </div>
+                    <div class="form-group" style="flex:1"><label>Alvo</label><input id="ed-target" class="form-input" type="number" value="${goal.target}"></div>
+                    <div class="form-group" style="flex:1"><label>Unidade</label><input id="ed-unit" class="form-input" type="text" value="${goal.unit}" placeholder="Ex: Pag, R$"></div>
                 </div>
-
                 <div class="row">
-                    <div class="form-group" style="flex:1">
-                        <label>Cor do Tema</label>
+                    <div class="form-group" style="flex:1"><label>Cor do Tema</label>
                         <select id="ed-color" class="form-input">
-                            <option value="emerald" ${goal.color === 'emerald' ? 'selected' : ''}>Esmeralda</option>
-                            <option value="blue" ${goal.color === 'blue' ? 'selected' : ''}>Azul</option>
-                            <option value="cyan" ${goal.color === 'cyan' ? 'selected' : ''}>Ciano</option>
-                            <option value="violet" ${goal.color === 'violet' ? 'selected' : ''}>Violeta</option>
-                            <option value="rose" ${goal.color === 'rose' ? 'selected' : ''}>Rosa</option>
-                            <option value="red" ${goal.color === 'red' ? 'selected' : ''}>Vermelho</option>
-                            <option value="amber" ${goal.color === 'amber' ? 'selected' : ''}>Amarelo</option>
+                            <option value="emerald" ${goal.color === 'emerald' ? 'selected' : ''}>Esmeralda</option><option value="blue" ${goal.color === 'blue' ? 'selected' : ''}>Azul</option>
+                            <option value="cyan" ${goal.color === 'cyan' ? 'selected' : ''}>Ciano</option><option value="violet" ${goal.color === 'violet' ? 'selected' : ''}>Violeta</option>
+                            <option value="amber" ${goal.color === 'amber' ? 'selected' : ''}>Amarelo</option><option value="rose" ${goal.color === 'rose' ? 'selected' : ''}>Rosa</option>
                             <option value="slate" ${goal.color === 'slate' ? 'selected' : ''}>Cinza</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex:1">
-                        <label>Ícone (Lucide)</label>
-                        <input id="ed-icon" class="form-input" type="text" value="${goal.icon}" placeholder="Ex: star, heart, book">
-                    </div>
+                    <div class="form-group" style="flex:1"><label>Ícone (Lucide)</label><input id="ed-icon" class="form-input" type="text" value="${goal.icon}"></div>
                 </div>
-
-                <div class="form-group">
-                    <label>Prazo Final</label>
-                    <input id="ed-date" class="form-input" type="date" value="${goal.deadline}">
-                </div>
-                
+                <div class="form-group"><label>Prazo Final</label><input id="ed-date" class="form-input" type="date" value="${goal.deadline || ''}"></div>
                 <div class="form-group" style="border-top:2px solid #f1f5f9; padding-top:1.25rem; margin-top:1.25rem;">
                     <label>Marcos / Milestones</label>
                     <div class="row" style="margin-bottom: 0.5rem">
@@ -532,77 +494,66 @@
                     </div>
                     <ul class="milestone-list">${msList}</ul>
                 </div>
-
-                <button onclick="saveModalForm()" class="btn-primary">
-                    ${isEdit ? 'Salvar Alterações' : 'Criar Nova Meta'}
-                </button>
-
-                ${isEdit ? `<button onclick="deleteGoal()" class="btn-danger">Excluir esta Meta</button>` : ''}
+                <button onclick="saveModalForm()" class="btn-primary">${isEdit ? 'Salvar' : 'Criar Meta'}</button>
+                ${isEdit ? `<button onclick="deleteGoal()" class="btn-danger">Excluir Meta</button>` : ''}
             `;
         }
 
-        function closeModal() {
-            document.getElementById('edit-modal-overlay').classList.add('hidden');
-            editingGoalId = null;
-        }
-
-        function addTempMS() {
-            const val = document.getElementById('new-ms-val').value;
-            const lbl = document.getElementById('new-ms-lbl').value;
-            if (val && lbl) {
-                window.tempMilestones.push({ val: parseFloat(val), label: lbl });
-                window.tempMilestones.sort((a,b) => a.val - b.val);
-                const currentData = getFormData();
-                currentData.milestones = window.tempMilestones;
-                renderModalForm(currentData, editingGoalId !== null);
-            }
-        }
-
-        function removeTempMS(idx) {
-            window.tempMilestones.splice(idx, 1);
-            const currentData = getFormData();
-            currentData.milestones = window.tempMilestones;
-            renderModalForm(currentData, editingGoalId !== null);
-        }
-
+        function closeModal() { document.getElementById('edit-modal-overlay').classList.add('hidden'); editingGoalId = null; }
+        
         function getFormData() {
             return {
-                title: document.getElementById('ed-title') ? document.getElementById('ed-title').value : '',
-                target: document.getElementById('ed-target') ? parseFloat(document.getElementById('ed-target').value) : 0,
-                unit: document.getElementById('ed-unit') ? document.getElementById('ed-unit').value : '',
-                deadline: document.getElementById('ed-date') ? document.getElementById('ed-date').value : '',
-                color: document.getElementById('ed-color') ? document.getElementById('ed-color').value : 'blue',
-                icon: document.getElementById('ed-icon') ? document.getElementById('ed-icon').value : 'target'
+                cycleId: document.getElementById('ed-cycle').value, title: document.getElementById('ed-title').value,
+                target: parseFloat(document.getElementById('ed-target').value) || 0, unit: document.getElementById('ed-unit').value,
+                deadline: document.getElementById('ed-date').value, color: document.getElementById('ed-color').value, icon: document.getElementById('ed-icon').value
             };
         }
 
         function saveModalForm() {
-            const formData = getFormData();
-            
-            if(!formData.title || !formData.target) {
-                alert("Por favor, preencha o Título e o Alvo.");
-                return;
-            }
-
-            if (editingGoalId) {
-                const id = editingGoalId;
-                goals[id] = { ...goals[id], ...formData, milestones: window.tempMilestones, lastUpdated: new Date().toISOString() };
-            } else {
+            const fd = getFormData();
+            if(!fd.title || !fd.target) return alert("Preencha Título e Alvo.");
+            if (editingGoalId) appData.goals[editingGoalId] = { ...appData.goals[editingGoalId], ...fd, milestones: window.tempMilestones, lastUpdated: new Date().toISOString() };
+            else {
                 const newId = 'goal_' + Date.now();
-                goals[newId] = {
-                    id: newId, ...formData, current: 0, milestones: window.tempMilestones, lastUpdated: new Date().toISOString()
-                };
+                const maxO = Math.max(-1, ...Object.values(appData.goals).filter(g => g.cycleId === fd.cycleId).map(g => g.order));
+                appData.goals[newId] = { id: newId, ...fd, current: 0, order: maxO + 1, milestones: window.tempMilestones, lastUpdated: new Date().toISOString() };
             }
+            closeModal(); saveToStorage(); render();
+        }
+        function deleteGoal() { if (confirm("Excluir meta?")) { delete appData.goals[editingGoalId]; closeModal(); saveToStorage(); render(); } }
+        function addTempMS() { const val = document.getElementById('new-ms-val').value; const lbl = document.getElementById('new-ms-lbl').value; if (val && lbl) { window.tempMilestones.push({ val: parseFloat(val), label: lbl }); window.tempMilestones.sort((a,b) => a.val - b.val); const cd = getFormData(); cd.milestones = window.tempMilestones; renderModalForm(cd, editingGoalId !== null); } }
+        function removeTempMS(idx) { window.tempMilestones.splice(idx, 1); const cd = getFormData(); cd.milestones = window.tempMilestones; renderModalForm(cd, editingGoalId !== null); }
 
-            closeModal();
-            save();
+        function openCycleModal(id = null, event) {
+            if(event) event.stopPropagation();
+            editingCycleId = id;
+            document.getElementById('cycle-modal-overlay').classList.remove('hidden');
+            const titleEl = document.getElementById('ed-cycle-title'), dateEl = document.getElementById('ed-cycle-date'), delBtn = document.getElementById('cycle-delete-btn-container');
+            if (id) {
+                const c = appData.cycles.find(c => c.id === id);
+                titleEl.value = c.title; dateEl.value = c.deadline;
+                delBtn.innerHTML = `<button onclick="deleteCycle()" class="btn-danger">Excluir Ciclo</button>`;
+            } else { titleEl.value = ''; dateEl.value = ''; delBtn.innerHTML = ''; }
+        }
+        function closeCycleModal() { document.getElementById('cycle-modal-overlay').classList.add('hidden'); editingCycleId = null; }
+        
+        function saveCycleModal() {
+            const title = document.getElementById('ed-cycle-title').value, date = document.getElementById('ed-cycle-date').value;
+            if(!title) return alert("Dê um nome ao Ciclo.");
+            if (editingCycleId) {
+                const c = appData.cycles.find(c => c.id === editingCycleId); c.title = title; c.deadline = date;
+            } else appData.cycles.push({ id: 'cycle_' + Date.now(), title, deadline: date });
+            closeCycleModal(); saveToStorage(); render();
         }
 
-        function deleteGoal() {
-            if (editingGoalId && confirm("Tem certeza que deseja excluir esta meta?")) {
-                delete goals[editingGoalId];
-                closeModal();
-                save();
+        function deleteCycle() {
+            if (appData.cycles.length <= 1) return alert("Mantenha ao menos um ciclo.");
+            if (confirm("Excluir ciclo? Metas irão para outro ciclo.")) {
+                const fallbackId = appData.cycles.find(c => c.id !== editingCycleId).id;
+                Object.values(appData.goals).forEach(g => { if (g.cycleId === editingCycleId) { g.cycleId = fallbackId; g.order += 100; } });
+                appData.cycles = appData.cycles.filter(c => c.id !== editingCycleId);
+                if(appData.currentCycleId === editingCycleId) appData.currentCycleId = fallbackId;
+                closeCycleModal(); saveToStorage(); render();
             }
         }
 
